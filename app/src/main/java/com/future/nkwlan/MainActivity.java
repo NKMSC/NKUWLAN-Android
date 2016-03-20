@@ -60,20 +60,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
             case R.id.main_login_btn:
-                User user = NkCache.getAccount(this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle("提示")
+                        .setNegativeButton("否",null);
+                final User user = NkCache.getAccount(this);
+
                 if (status == NetworkInfo.UN_LOGIN) {
-                    Toast.makeText(getApplicationContext(), "正在登录...",
-                            Toast.LENGTH_LONG).show();
-                    new Login().execute(user.uid, user.psw);
-                }
-                if (status == NetworkInfo.ONLINE) {
-                    Toast.makeText(getApplicationContext(), "正在注销...",
-                            Toast.LENGTH_LONG).show();
-                    new Logout().execute();
+                    builder.setMessage(Html.fromHtml(
+                            String.format(getString(R.string.main_login_alert), user.uid, ssid)
+                    )).setPositiveButton("登录", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            new Login().execute(user.uid, user.psw);
+                            Toast.makeText(getApplicationContext(), "正在登录...",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
 
+                if (status == NetworkInfo.ONLINE) {
+                    builder.setMessage(Html.fromHtml(
+                            String.format(getString(R.string.main_logout_alert), user.uid, ssid)
+                    )).setPositiveButton("注销", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getApplicationContext(), "正在注销...",
+                                    Toast.LENGTH_LONG).show();
+                            new Logout().execute();
+                        }
+                    });
+                }
+                builder.show();
                 break;
         }
     }
@@ -104,24 +123,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 NkCache.getAccount(this).uid))).setNegativeButton("切换账号", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        NkCache.setAccount(getApplicationContext(),"","",false);
+                        NkCache.setAccount(getApplicationContext(), "", "", false);
                         startActivity(new Intent(getApplicationContext(), AccountActivity.class));
                     }
-                }).setPositiveButton("不更换",null);
+                }).setPositiveButton("不更换", null);
         builder.show();
     }
 
-    private void loginInfoDialog(){
-        View v = getLayoutInflater().inflate(R.layout.dialog_main_login_info,null);
-        uidTxt = (TextView) v.findViewById(R.id.main_uid_txt);
-        loginInfoTxt = (TextView) v.findViewById(R.id.main_login_info_txt);
-        ssidTxt = (TextView) v.findViewById(R.id.main_ssid_txt);
-        isNkuTxt = (TextView) v.findViewById(R.id.main_isnku_txt);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setView(v).setPositiveButton("好的",null);
-
-    }
 
     private class UpdateStatus extends AsyncTask<String, Long, NetworkInfo> {
 

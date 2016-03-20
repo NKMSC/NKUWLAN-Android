@@ -40,6 +40,17 @@
         ]]>
     </string>
 
+    <string name="main_login_alert" formatted="false">
+        <![CDATA[
+            是否使用 <b>%s</b> 登录 <b>%s</b> ？
+        ]]>
+    </string>
+
+    <string name="main_logout_alert" formatted="false">
+        <![CDATA[
+            是否注销 <b>%s</b> 在WiFi <b>%s</b> 的登录？
+        ]]></string>
+
     <string name="main_network_info" formatted="false">
         <![CDATA[
             登录时长    ：%.0f 分钟<br/>
@@ -47,4 +58,5 @@
             本月使用流量：%.3f GB<br/>
         ]]>
     </string>
+
 </resources>
