@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">NKU-Helper</string>
+
+    <string name="app_description">
+        <![CDATA[
+<p><b>使用帮助：</b></p>
+        输入你的NKU_WLAN用户名和密码，APP将会保存在本地，在当你连入NKU_WLAN时，APP将自动为你登录。
+        ]]>
+    </string>
+
+    <string name="main_user_info" formatted="false">
+        <![CDATA[
+            SSID：%s<br/>
+            校园网\t：\t%s<br/>
+            登录账号\t ：\t%s <br/>
+        ]]>
+    </string>
+
+    <string name="main_ssid" formatted="false">
+        <![CDATA[
+            SSID     : %s<br/>
+        ]]>
+    </string>
+
+    <string name="main_uid" formatted="false">
+        <![CDATA[
+            登录账号  :%s<br/>
+        ]]>
+    </string>
+
+    <string name="main_isnku" formatted="false">
+        <![CDATA[
+            NKU校园网 :%s<br/>
+        ]]>
+    </string>
+
+    <string name="main_logout_or_not" formatted="false">
+        <![CDATA[
+            你当前保存的账号为 :<b>%s</b><br/>是否更换账号？
+        ]]>
+    </string>
+
+    <string name="main_network_info" formatted="false">
+        <![CDATA[
+            登录时长    ：%.0f 分钟<br/>
+            账户余额    ：%.2f 元<br/>
+            本月使用流量：%.3f GB<br/>
+        ]]>
+    </string>
+</resources>
