@@ -55,7 +55,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        wifiImg.setOnClickListener(this);
         WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
         ssid = wifiManager.getConnectionInfo().getSSID().replace("\"", "");
+
+        Log.e("nkwlan", "onCreate");
+    }
+
+
+    public void onResume() {
+        super.onResume();
         new UpdateStatus().execute();
+        Log.e("nkwlan", "onResume");
     }
 
     @Override
@@ -64,35 +72,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.main_login_btn:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle("提示")
-                        .setNegativeButton("否",null);
+                        .setNegativeButton("否", null);
                 final User user = NkCache.getAccount(this);
-
-                if (status == NetworkInfo.UN_LOGIN) {
-                    builder.setMessage(Html.fromHtml(
-                            String.format(getString(R.string.main_login_alert), user.uid, ssid)
-                    )).setPositiveButton("登录", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            new Login().execute(user.uid, user.psw);
-                            Toast.makeText(getApplicationContext(), "正在登录...",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
+                switch (status) {
+                    case NetworkInfo.UN_LOGIN:
+                        builder.setMessage(Html.fromHtml(
+                                String.format(getString(R.string.main_login_alert), user.uid, ssid)
+                        )).setPositiveButton("登录", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new Login().execute(user.uid, user.psw);
+                                Toast.makeText(getApplicationContext(), "正在登录...",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        if (ssid.equals("NKU_WLAN"))
+                            builder.show();
+                        break;
+                    case NetworkInfo.ONLINE:
+                        builder.setMessage(Html.fromHtml(
+                                String.format(getString(R.string.main_logout_alert), user.uid, ssid)
+                        )).setPositiveButton("注销", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getApplicationContext(), "正在注销...",
+                                        Toast.LENGTH_LONG).show();
+                                new Logout().execute();
+                            }
+                        });
+                        builder.show();
+                        break;
+                    case NetworkInfo.UNCONNECTED:
+                        new UpdateStatus().execute();
+                        break;
                 }
-
-                if (status == NetworkInfo.ONLINE) {
-                    builder.setMessage(Html.fromHtml(
-                            String.format(getString(R.string.main_logout_alert), user.uid, ssid)
-                    )).setPositiveButton("注销", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(getApplicationContext(), "正在注销...",
-                                    Toast.LENGTH_LONG).show();
-                            new Logout().execute();
-                        }
-                    });
-                }
-                builder.show();
                 break;
         }
     }
@@ -198,8 +211,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 uidTxt.setVisibility(View.GONE);
                 ssidTxt.setVisibility(View.GONE);
                 loginInfoTxt.setVisibility(View.GONE);
-                loginBtn.setText("无法登录");
-                isNkuTxt.setText("不是NKU_WLAN环境");
+                loginBtn.setText("刷新");
+                isNkuTxt.setText("不是NKU_WLAN环境,无法登录");
+                isNkuTxt.setVisibility(View.VISIBLE);
                 wifiImg.setImageResource(R.drawable.wifi_disconnected);
                 break;
         }
