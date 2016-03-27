@@ -28,4 +28,14 @@ public class NetworkInfo {
     public NetworkInfo(int status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "NetworkInfo{" +
+                "fee=" + fee +
+                ", flow=" + flow +
+                ", time=" + time +
+                ", status=" + status +
+                '}';
+    }
 }

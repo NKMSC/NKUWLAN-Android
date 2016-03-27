@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -97,6 +98,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(NetworkInfo info) {
+            Log.e("wlan",info.toString());
             switch (info.status){
                 case NetworkInfo.SUCCESS_UNKNOWN:
 
@@ -118,7 +120,10 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(getApplicationContext(),
                             "登录失败，请稍后再试", Toast.LENGTH_SHORT).show();
                     break;
-
+                case NetworkInfo.UN_LOGIN:
+                    Toast.makeText(getApplicationContext(),
+                            "登录失败，请确认账号密码正确，且余额充足", Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
     }

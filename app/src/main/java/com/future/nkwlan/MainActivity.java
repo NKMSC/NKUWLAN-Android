@@ -25,7 +25,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private int status;
+    private int status = -1;
     private ImageView wifiImg;
     private Button loginBtn;
     private TextView messageTxt, uidTxt, ssidTxt, isNkuTxt, loginInfoTxt;
@@ -38,10 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         User user = NkCache.getAccount(this);
-        if (user.uid.length() == 0) {
-            startActivity(new Intent(this, AccountActivity.class));
-            return;
-        }
+
 
         messageTxt = (TextView) findViewById(R.id.main_message_txt);
         uidTxt = (TextView) findViewById(R.id.main_uid_txt);
@@ -57,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ssid = wifiManager.getConnectionInfo().getSSID().replace("\"", "");
 
         Log.e("nkwlan", "onCreate");
+        if (user.uid.length() == 0) {
+            startActivity(new Intent(this, AccountActivity.class));
+        }
     }
 
 
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-
+        Log.e("wlan", "onClick:status=" + status);
         switch (v.getId()) {
             case R.id.main_login_btn:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle("提示")
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         Toast.LENGTH_LONG).show();
                             }
                         });
-                        if (ssid.equals("NKU_WLAN"))
+                        if (!ssid.equals("NKU_WLAN"))
                             builder.show();
                         break;
                     case NetworkInfo.ONLINE:
@@ -103,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         builder.show();
                         break;
                     case NetworkInfo.UNCONNECTED:
+                        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+                        ssid = wifiManager.getConnectionInfo().getSSID().replace("\"", "");
                         new UpdateStatus().execute();
                         break;
                 }
