@@ -1,5 +1,6 @@
 package com.future.nkwlan;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView messageTxt, uidTxt, ssidTxt, isNkuTxt, loginInfoTxt;
     private String ssid = "to be getting";
     private String isNKU = "是";
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         User user = NkCache.getAccount(this);
-
 
         messageTxt = (TextView) findViewById(R.id.main_message_txt);
         uidTxt = (TextView) findViewById(R.id.main_uid_txt);
@@ -50,8 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loginBtn = (Button) findViewById(R.id.main_login_btn);
         loginBtn.setOnClickListener(this);
 //        wifiImg.setOnClickListener(this);
-        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
-        ssid = wifiManager.getConnectionInfo().getSSID().replace("\"", "");
 
         Log.e("nkwlan", "onCreate");
         if (user.uid.length() == 0) {
@@ -62,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onResume() {
         super.onResume();
+        context = this;
+        WifiManager wifiManager = (WifiManager) this.getSystemService(WIFI_SERVICE);
+        ssid = wifiManager.getConnectionInfo().getSSID().replace("\"", "");
         new UpdateStatus().execute();
         Log.e("nkwlan", "onResume");
     }
@@ -86,8 +88,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         Toast.LENGTH_LONG).show();
                             }
                         });
-                        if (!ssid.equals("NKU_WLAN"))
+                        if (ssid.equals("NKU_WLAN")) {
+                            new Login().execute(user.uid, user.psw);
+                            Toast.makeText(getApplicationContext(), "正在登录...",
+                                    Toast.LENGTH_LONG).show();
+                        } else {
                             builder.show();
+                        }
                         break;
                     case NetworkInfo.ONLINE:
                         builder.setMessage(Html.fromHtml(
@@ -145,11 +152,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         builder.show();
     }
 
-
     private class UpdateStatus extends AsyncTask<String, Long, NetworkInfo> {
 
         @Override
         protected NetworkInfo doInBackground(String... params) {
+            if (!NkNetwork.isWifi(context))
+                return new NetworkInfo(NetworkInfo.UNCONNECTED);
             return NkNetwork.getLogStatus();
         }
 

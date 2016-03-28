@@ -1,5 +1,7 @@
 package com.future.nkwlan;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.util.Log;
 
 import com.squareup.okhttp.Call;
@@ -60,6 +62,7 @@ public class NkNetwork {
 
     public static NetworkInfo login(String uid, String psw) {
         NetworkInfo tmp = getLogStatus();
+//        Log.e("wlan", String.format("status check before login:%s,%s,%s",tmp.status,uid,psw));
         if (tmp.status != NetworkInfo.UN_LOGIN)
             return tmp;
         RequestBody requestBody = RequestBody.create(
@@ -70,8 +73,9 @@ public class NkNetwork {
         Request request = new Request.Builder().post(requestBody).url(hosts[0] + login_path).build();
         try {
             String result = client.newCall(request).execute().body().string();
-            Log.e("future.wlan", result);
+            Log.e("wlan", result);
         } catch (IOException e) {
+            Log.e("wlan", e.toString());
             e.printStackTrace();
         }
         return getLogStatus();
@@ -117,5 +121,14 @@ public class NkNetwork {
         String raw1 = raw.substring(raw.indexOf(tag) + tag.length());
         String raw2 = raw1.substring(0, raw1.indexOf("'"));
         return raw2.trim();
+    }
+
+    public static boolean isWifi(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        android.net.NetworkInfo wifiNetworkInfo =
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return wifiNetworkInfo.isConnected();
+
     }
 }
