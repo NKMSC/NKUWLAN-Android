@@ -85,13 +85,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             public void onClick(DialogInterface dialog, int which) {
                                 new Login().execute(user.uid, user.psw);
                                 Toast.makeText(getApplicationContext(), "正在登录...",
-                                        Toast.LENGTH_LONG).show();
+                                        Toast.LENGTH_SHORT).show();
                             }
                         });
                         if (ssid.equals("NKU_WLAN")) {
                             new Login().execute(user.uid, user.psw);
                             Toast.makeText(getApplicationContext(), "正在登录...",
-                                    Toast.LENGTH_LONG).show();
+                                    Toast.LENGTH_SHORT).show();
                         } else {
                             builder.show();
                         }
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Toast.makeText(getApplicationContext(), "正在注销...",
-                                        Toast.LENGTH_LONG).show();
+                                        Toast.LENGTH_SHORT).show();
                                 new Logout().execute();
                             }
                         });
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ssidTxt.setVisibility(View.GONE);
                 loginInfoTxt.setVisibility(View.GONE);
                 loginBtn.setText("刷新");
-                isNkuTxt.setText("不是NKU_WLAN环境,无法登录");
+                isNkuTxt.setText(R.string.not_intranet_cant_login);
                 isNkuTxt.setVisibility(View.VISIBLE);
                 wifiImg.setImageResource(R.drawable.wifi_disconnected);
                 break;

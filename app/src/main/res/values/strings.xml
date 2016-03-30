@@ -58,5 +58,6 @@
             本月使用流量：%.3f GB<br/>
         ]]>
     </string>
+    <string name="not_intranet_cant_login">不是NKU_WLAN环境,无法登录</string>
 
 </resources>
